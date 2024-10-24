@@ -1,0 +1,39 @@
+name: Update README
+
+on:
+  push:
+    branches:
+      - main  # Change this to your default branch if it's different
+    paths:
+      - templates/template.md  # Trigger on changes to template.md
+      - README.md  # Also trigger on README.md changes if you want
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        
+      - name: Generate README
+        run: |
+          echo "Generating README from template..."
+          # Read the template, replace placeholders, and write to README.md
+          sed -e 's/{{NAME}}/${{ github.actor }}/g' \
+              -e 's/{{USERNAME}}/${{ github.actor }}/g' \
+              templates/template.md > README.md
+        
+      - name: Set up Git
+        run: |
+          git config user.name "siegrin"
+          git config user.email "piubitt@gmail.com"
+        
+      - name: Commit changes
+        run: |
+          git add README.md
+          git commit -m "Update README with new information" || echo "No changes to commit"
+        
+      - name: Push changes
+        run: |
+          git push
